@@ -1,7 +1,10 @@
 require_relative "tile"
+require 'byebug'
+
 
 class Board
   attr_reader :grid
+  # attr_accessor :rows
 
   def self.empty_grid
     Array.new(9) do
@@ -11,15 +14,18 @@ class Board
 
   def self.from_file(filename)
     rows = File.readlines(filename).map(&:chomp)
+    # debugger
     tiles = rows.map do |row|
       nums = row.split("").map { |char| Integer(char) }
       nums.map { |num| Tile.new(num) }
+      debugger
     end
+    debugger
 
     self.new(tiles)
   end
 
-  def initialize(grid = self.empty_grid)
+  def initialize(grid = self.class.empty_grid)
     @grid = grid
   end
 
@@ -34,6 +40,13 @@ class Board
     tile.value = value
   end
 
+  def rows
+    rows = grid.map do |row|
+      row.map { |char| Integer(char) }
+    end
+    rows
+  end
+
   def columns
     rows.transpose
   end
@@ -46,13 +59,8 @@ class Board
   end
 
 
-  def size
-    grid.size
-  end
-
-  alias_method :rows, :size
-
   def solved?
+    # debugger
     rows.all? { |row| solved_set?(row) } &&
       columns.all? { |col| solved_set?(col) } &&
       squares.all? { |square| solved_set?(square) }
